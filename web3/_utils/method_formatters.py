@@ -49,6 +49,12 @@ from hexbytes import (
 from web3._utils.abi import (
     is_length,
 )
+
+from web3._utils.custom_formatters import (
+    is_xdc_address,
+    to_xdc_checksum_address
+)
+
 from web3._utils.encoding import (
     hexstr_if_str,
     to_hex,
@@ -155,12 +161,12 @@ TRANSACTION_RESULT_FORMATTERS = {
     'maxFeePerGas': to_integer_if_hex,
     'maxPriorityFeePerGas': to_integer_if_hex,
     'value': to_integer_if_hex,
-    'from': to_checksum_address,
+    'from': to_xdc_checksum_address,
     'publicKey': apply_formatter_if(is_not_null, to_hexbytes(64)),
     'r': apply_formatter_if(is_not_null, to_hexbytes(32, variable_length=True)),
     'raw': HexBytes,
     's': apply_formatter_if(is_not_null, to_hexbytes(32, variable_length=True)),
-    'to': apply_formatter_if(is_address, to_checksum_address),
+    'to': apply_formatter_if(is_xdc_address, to_xdc_checksum_address),
     'hash': to_hexbytes(32),
     'v': apply_formatter_if(is_not_null, to_integer_if_hex),
     'standardV': apply_formatter_if(is_not_null, to_integer_if_hex),
@@ -180,7 +186,7 @@ LOG_ENTRY_FORMATTERS = {
     'transactionIndex': apply_formatter_if(is_not_null, to_integer_if_hex),
     'transactionHash': apply_formatter_if(is_not_null, to_hexbytes(32)),
     'logIndex': to_integer_if_hex,
-    'address': to_checksum_address,
+    'address': to_xdc_checksum_address,
     'topics': apply_list_to_array_formatter(to_hexbytes(32)),
     'data': to_ascii_if_bytes,
 }
@@ -197,11 +203,11 @@ RECEIPT_FORMATTERS = {
     'cumulativeGasUsed': to_integer_if_hex,
     'status': to_integer_if_hex,
     'gasUsed': to_integer_if_hex,
-    'contractAddress': apply_formatter_if(is_not_null, to_checksum_address),
+    'contractAddress': apply_formatter_if(is_not_null, to_xdc_checksum_address),
     'logs': apply_list_to_array_formatter(log_entry_formatter),
     'logsBloom': to_hexbytes(256),
-    'from': apply_formatter_if(is_not_null, to_checksum_address),
-    'to': apply_formatter_if(is_address, to_checksum_address),
+    'from': apply_formatter_if(is_not_null, to_xdc_checksum_address),
+    'to': apply_formatter_if(is_address, to_xdc_checksum_address),
     'effectiveGasPrice': to_integer_if_hex,
 }
 
@@ -217,7 +223,7 @@ BLOCK_FORMATTERS = {
     'timestamp': to_integer_if_hex,
     'hash': apply_formatter_if(is_not_null, to_hexbytes(32)),
     'logsBloom': apply_formatter_if(is_not_null, to_hexbytes(256)),
-    'miner': apply_formatter_if(is_not_null, to_checksum_address),
+    'miner': apply_formatter_if(is_not_null, to_xdc_checksum_address),
     'mixHash': apply_formatter_if(is_not_null, to_hexbytes(32)),
     'nonce': apply_formatter_if(is_not_null, to_hexbytes(8, variable_length=True)),
     'number': apply_formatter_if(is_not_null, to_integer_if_hex),
@@ -454,10 +460,10 @@ PYTHONIC_REQUEST_FORMATTERS: Dict[RPCEndpoint, Callable[..., Any]] = {
 
 PYTHONIC_RESULT_FORMATTERS: Dict[RPCEndpoint, Callable[..., Any]] = {
     # Eth
-    RPC.eth_accounts: apply_list_to_array_formatter(to_checksum_address),
+    RPC.eth_accounts: apply_list_to_array_formatter(to_xdc_checksum_address),
     RPC.eth_blockNumber: to_integer_if_hex,
     RPC.eth_chainId: to_integer_if_hex,
-    RPC.eth_coinbase: to_checksum_address,
+    RPC.eth_coinbase: to_xdc_checksum_address,
     RPC.eth_call: HexBytes,
     RPC.eth_estimateGas: to_integer_if_hex,
     RPC.eth_feeHistory: fee_history_formatter,
@@ -506,9 +512,9 @@ PYTHONIC_RESULT_FORMATTERS: Dict[RPCEndpoint, Callable[..., Any]] = {
     RPC.eth_syncing: apply_formatter_if(is_not_false, syncing_formatter),
     # personal
     RPC.personal_importRawKey: to_checksum_address,
-    RPC.personal_listAccounts: apply_list_to_array_formatter(to_checksum_address),
+    RPC.personal_listAccounts: apply_list_to_array_formatter(to_xdc_checksum_address),
     RPC.personal_listWallets: apply_list_to_array_formatter(geth_wallets_formatter),
-    RPC.personal_newAccount: to_checksum_address,
+    RPC.personal_newAccount: to_xdc_checksum_address,
     RPC.personal_sendTransaction: to_hexbytes(32),
     RPC.personal_signTypedData: HexBytes,
     # Transaction Pool
